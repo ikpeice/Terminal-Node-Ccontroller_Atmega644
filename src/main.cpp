@@ -4,7 +4,10 @@
 #define control_pin 23
 #define TX_controlPin 22
 #define AF_IN 0
-#define verbros true
+#define verbros false
+#define red_led 19
+#define greren_led 20
+#define blue_led 21
 
 char *data = "";
 
@@ -12,6 +15,9 @@ TNCTransceiver TNC(AF_IN,control_pin);
 
 
 void setup() {
+  pinMode(red_led,OUTPUT);
+  pinMode(greren_led,OUTPUT);
+  pinMode(blue_led,OUTPUT);
   Serial.begin(9600);
   TNC.begin(verbros);
   pinMode(TX_controlPin,INPUT);
@@ -22,18 +28,27 @@ void setup() {
 void loop() {
 
   if(digitalRead(control_pin)){
+    digitalWrite(blue_led,0);
+    digitalWrite(red_led,1);
     TNC.Transmit_stop();
     Serial.println("Receiving");
     if(TNC.receive(data)){
-      Serial.println(data);
+      digitalWrite(greren_led,1);
+      Serial.println(data);delay(50);
+      digitalWrite(greren_led,0);
+      if(verbros)Serial.println("Stopped");
     }
-    if(verbros)Serial.println("Stopped");
+    
   }else{
+    
+    digitalWrite(red_led,0);
     TNC.Transmit_start();
     delay(100);
+    digitalWrite(blue_led,1);
     //if(digitalRead(TX_controlPin)){
       Serial.println("Transmitting");
       TNC.modulate("GOOD!");
+      digitalWrite(blue_led,0);
     //}
   }
 
