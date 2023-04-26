@@ -3,6 +3,10 @@
 		{
 			"name": "TNC_644",
 			"path": ".."
+		},
+		{
+			"name": "Locator",
+			"path": "../../Locator"
 		}
 	],
 	"settings": {}
