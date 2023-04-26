@@ -7,7 +7,7 @@ LiquidCrystal lcd(24,25,26,27,28,29);
 #define control_pin 23
 #define TX_controlPin 22
 #define AF_IN 0
-#define verbros true
+#define verbros false
 #define red_led 19
 #define greren_led 20
 #define blue_led 21
