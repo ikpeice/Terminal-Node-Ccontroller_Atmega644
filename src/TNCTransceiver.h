@@ -32,7 +32,7 @@ private:
     void bits_to_char(bool buffer[], int buff_size,char *msg);
     char decode();
     void setup_freq();
-    void floatTocharArray(char *s, double num);
+    
     int len(char s[]);
     char intTochar(int num);
     char *myString="";
@@ -42,6 +42,7 @@ public:
 
     TNCTransceiver(int AF_pin,int control_pin);
     ~TNCTransceiver();
+    void floatTocharArray(char *s, double num);
     void begin(bool verbros);
     bool receive(char *msg);
     void modulate(char *s);
