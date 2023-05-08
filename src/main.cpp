@@ -29,9 +29,10 @@ void setup() {
   Serial.begin(9600);
   TNC.begin(verbros);
   pinMode(TX_controlPin,INPUT);
-  TNC.Transmit_start();
+  
   Serial.println("Started");
   //cli();
+  TNC.Transmit_start();
 }
 
 void clear_buff(char *s,int siz){
