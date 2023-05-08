@@ -239,8 +239,9 @@ void TNCTransceiver::modulate(char *s){
   // }
   // OCR1B = 0;
 
-  int listSize = (len(s)*10);
-  bool *list = new bool[listSize];
+  int listSize = strlen(s)*10;//(len(s)*10);
+  bool list[1500];
+  //bool *list = new bool[listSize];
   int inc=0;
 
   for(int i =0; i<len(s); i++){ //select character
@@ -264,7 +265,7 @@ void TNCTransceiver::modulate(char *s){
     while(ct==false);
   }
 
-  delete [] list;
+  //delete [] list;
   OCR1B = 0;
 }
 
