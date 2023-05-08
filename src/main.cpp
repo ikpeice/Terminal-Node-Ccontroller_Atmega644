@@ -13,7 +13,7 @@ bool complete=false;
 char s[50];
 int num = 0;
 
-char *data = "";
+char data[50];// = "";
 
 String inputString = "";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
@@ -53,7 +53,7 @@ void loop() {
       digitalWrite(greren_led,1);
       Serial.println(data);delay(500);
       digitalWrite(greren_led,0);
-      data = "";
+      //data = "";
       if(verbros)Serial.println("Stopped");
     }
     

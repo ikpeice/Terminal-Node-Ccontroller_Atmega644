@@ -29,7 +29,7 @@ const int frequency_B = 2;
 
 
 private:
-    void bits_to_char(bool buffer[], int buff_size,char *msg);
+    char bits_to_char(bool buffer[], int buff_size);
     char decode();
     void setup_freq();
     

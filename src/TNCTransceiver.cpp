@@ -56,39 +56,17 @@ void TNCTransceiver::begin(bool verbros){
   if(debug)Serial.println("Setup frequency done!");
 }
 
-void TNCTransceiver::bits_to_char(bool buffer[], int buff_size, char *msg){
-  int num_of_char = buff_size/8;
-  char *s = new char[num_of_char];
+char TNCTransceiver::bits_to_char(bool buffer[], int buff_size){
+  char s=0x00; // = new char[num_of_char];
   char x = 0x01;
-  int inc=0;
-
-  
-  bool data[8];// = new bool[8];
-
-  for(int i=0;i<num_of_char;i++){
-    for(int j=0;j<8;j++){
-      data[j] = buffer[inc];
-      inc++;
-    }
-    s[i] = 0x00;
-    for(int j=8;j>0;j--){
-      s[i] = s[i] | (data[j-1] * x);
+    for(int j=buff_size;j>0;j--){
+      s = s | (buffer[j-1] * x);
       x = x << 1;
     }
-    x=0x01;
-  }
-  //char *msg= new char[num_of_char];
-  for(int i=0;i<num_of_char;i++){
-    msg[i] = s[num_of_char-(i+1)];
-  }
   if(debug){
-    for(int i=0;i<num_of_char;i++){
-      Serial.print(s[num_of_char-(i+1)]);
-    }
-    Serial.println("");
+    Serial.println(s);
   }
-  delete [] s;
-  //delete [] msg;
+  return s;
 }
 
 char  TNCTransceiver::decode(){
@@ -115,6 +93,7 @@ bool TNCTransceiver::receive(char *msg){
   char bit=1;
   int counter=0;
   int bit_counter=0;
+  int no_of_char=0;
   while(bit){ // wait for start bit
     bit = decode();
     if(bit<0){
@@ -138,6 +117,8 @@ bool TNCTransceiver::receive(char *msg){
       counter++;
       bit_counter++;
       if(bit_counter==8){
+        msg[no_of_char] = bits_to_char(buffer, bit_counter);
+        no_of_char++;
         bit_counter=0; // clear
         flag=true;
       }
@@ -151,16 +132,6 @@ bool TNCTransceiver::receive(char *msg){
       break;
     }
   }
-  if(debug)Serial.println("counter = "+String(counter));
-  bool *buff = new bool[counter];
-  for(int i=0;i<counter;i++)
-  {
-    buff[i] = buffer[counter-(i+1)];
-    msg[i] = buffer[counter-(i+1)];
-  }
-  bits_to_char(buff, counter,msg);
-  delete [] buff;
-
   return true;
   
 }
