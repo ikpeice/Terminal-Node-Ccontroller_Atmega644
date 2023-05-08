@@ -4,16 +4,15 @@
 #define control_pin 23
 #define TX_controlPin 22
 #define AF_IN 0
-#define verbros false
+#define verbros true
 #define red_led 19
 #define greren_led 20
 #define blue_led 21
 
 bool complete=false;
-char s[50];
+char s[500];
 int num = 0;
 
-char *data = "";
 
 String inputString = "";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
@@ -34,8 +33,8 @@ void setup() {
   //cli();
 }
 
-void clear_buff(){
-  for(int i=0;i<50;i++){
+void clear_buff(char *s,int size){
+  for(int i=0;i<size;i++){
     s[i]='\0';
   }
 }
@@ -49,34 +48,36 @@ void loop() {
 //    RECEIVER
 
 
-    if(TNC.receive(data)){
+    if(TNC.receive(s)){
       digitalWrite(greren_led,1);
-      Serial.println(data);delay(500);
+      for(int i=0;i<strlen(s);i++){
+        Serial.println(s[i]);
+      }
       digitalWrite(greren_led,0);
-      data = "";
+      clear_buff(s,500);
       if(verbros)Serial.println("Stopped");
     }
     
 //    Transmitter
 
 
-  // if(stringComplete==true){
-  //   stringComplete = false;
-  //   Serial.print("Received= "+inputString);
-  //   inputString.toCharArray(s,inputString.length()+1);
-  //   for(int i=0;i<50;i++){
-  //     Serial.print(s[i]);
-  //   }
-  //   digitalWrite(red_led,0);
-  //   digitalWrite(blue_led,1);
-  //   TNC.Transmit_start();
-  //   delay(100); 
-  //   Serial.println("Transmitting");
-  //   TNC.modulate(s);
-  //   clear_buff();
-  //   delay(1000);
-  //   digitalWrite(blue_led,0);  
-  // }
+  if(stringComplete==true){
+    stringComplete = false;
+    Serial.print("Received= "+inputString);
+    inputString.toCharArray(s,inputString.length()+1);
+    for(int i=0;i<50;i++){
+      Serial.print(s[i]);
+    }
+    digitalWrite(red_led,0);
+    digitalWrite(blue_led,1);
+    TNC.Transmit_start();
+    delay(100); 
+    Serial.println("Transmitting");
+    TNC.modulate(s);
+    clear_buff(s,500);
+    delay(1000);
+    digitalWrite(blue_led,0);  
+  }
 
 }
 

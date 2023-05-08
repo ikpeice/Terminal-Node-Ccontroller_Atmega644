@@ -94,11 +94,11 @@ void TNCTransceiver::bits_to_char(bool buffer[], int buff_size, char *msg){
 char  TNCTransceiver::decode(){
   cli();
     period = pulseIn(AF_pin,HIGH,10000);
-    if(period>340 && period<450){
+    if(period>400 && period<650){
       bit = 1;
-    }else if(period>140 && period<250){
+    }else if(period>140 && period<350){
       period = pulseIn(AF_pin,HIGH,10000);
-      if(period>140 && period<230){
+      if(period>140 && period<330){
          bit = 0;
       }else{
         bit =  -1;
