@@ -1,21 +1,22 @@
 #include <Arduino.h>
 #include <TNCTransceiver.h>
+#include <stdlib.h>
 
 #define control_pin 23
 #define TX_controlPin 22
 #define AF_IN 0
-#define verbros false
+#define verbros true
 #define red_led 19
 #define greren_led 20
 #define blue_led 21
 
 bool complete=false;
-char s[50];
+char s[500];
 int num = 0;
 
-char data[50];// = "";
+char data[50];
 
-String inputString = "";         // a String to hold incoming data
+String inputString="";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
 
 TNCTransceiver TNC(AF_IN,control_pin);
@@ -28,55 +29,52 @@ void setup() {
   Serial.begin(9600);
   TNC.begin(verbros);
   pinMode(TX_controlPin,INPUT);
-  //TNC.Transmit_start();
-  TNC.Transmit_stop();
+  TNC.Transmit_start();
   Serial.println("Started");
   //cli();
 }
 
-void clear_buff(){
-  for(int i=0;i<50;i++){
+void clear_buff(char *s,int siz){
+  for(int i=0;i<siz;i++){
     s[i]='\0';
   }
 }
 
+int len[500];
 void loop() {
-
-  // if(digitalRead(control_pin)){
-  //   digitalWrite(blue_led,0);
-  //   digitalWrite(red_led,1);
-    
-//    RECEIVER
+  digitalWrite(red_led,1);
 
 
     if(TNC.receive(data)){
       digitalWrite(greren_led,1);
-      Serial.println(data);delay(500);
+      Serial.println(data);delay(100);
       digitalWrite(greren_led,0);
-      //data = "";
+      clear_buff(data,50);
       if(verbros)Serial.println("Stopped");
     }
     
 //    Transmitter
 
 
-  // if(stringComplete==true){
-  //   stringComplete = false;
-  //   Serial.print("Received= "+inputString);
-  //   inputString.toCharArray(s,inputString.length()+1);
-  //   for(int i=0;i<50;i++){
-  //     Serial.print(s[i]);
-  //   }
-  //   digitalWrite(red_led,0);
-  //   digitalWrite(blue_led,1);
-  //   TNC.Transmit_start();
-  //   delay(100); 
-  //   Serial.println("Transmitting");
-  //   TNC.modulate(s);
-  //   clear_buff();
-  //   delay(1000);
-  //   digitalWrite(blue_led,0);  
-  // }
+  if(stringComplete==true){
+    digitalWrite(red_led,0);
+    stringComplete = false;
+    Serial.println("Received= "+inputString);
+    inputString.toCharArray(s,inputString.length()+1);
+    for(int i=0;i<500;i++){
+      Serial.print(s[i]);
+    }
+    
+    digitalWrite(blue_led,1);
+    TNC.Transmit_start();
+    delay(100); 
+    Serial.println("Transmitting");
+    TNC.modulate(s);
+    clear_buff(s,500);
+    delay(100);
+    //TNC.Transmit_stop();
+    digitalWrite(blue_led,0);  
+  }
 
 }
 
@@ -85,13 +83,12 @@ void serialEvent() {
     // get the new byte:
     //char inChar = (char)Serial.read();
     // add it to the inputString:
-    inputString  = Serial.readString();//+= inChar;
+    inputString = Serial.readString();
     // if the incoming character is a newline, set a flag so the main loop can
     // do something about it:
-    // if (inChar == '\n') {
-    //   stringComplete = true;
-    // }
-    stringComplete = true;
+    //  if (inChar == '\n') {
+    //    stringComplete = true;
+    //  }
   }
-  
+  stringComplete = true;
 }

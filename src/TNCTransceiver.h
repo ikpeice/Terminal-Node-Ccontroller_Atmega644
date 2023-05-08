@@ -35,7 +35,7 @@ private:
     
     int len(char s[]);
     char intTochar(int num);
-    char *myString="";
+    //char *myString="";
 
 
 public:

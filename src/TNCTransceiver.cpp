@@ -74,9 +74,9 @@ char  TNCTransceiver::decode(){
     period = pulseIn(AF_pin,HIGH,10000);
     if(period>340 && period<450){
       bit = 1;
-    }else if(period>140 && period<250){
+    }else if(period>100 && period<250){
       period = pulseIn(AF_pin,HIGH,10000);
-      if(period>140 && period<230){
+      if(period>100 && period<230){
          bit = 0;
       }else{
         bit =  -1;
@@ -97,7 +97,7 @@ bool TNCTransceiver::receive(char *msg){
   while(bit){ // wait for start bit
     bit = decode();
     if(bit<0){
-      if(debug)Serial.println("No signal");
+      //if(debug)Serial.println("No signal");
       return false; //digitalRead(control_pin) ||  terminate if control pin is low
     }
   }
@@ -234,7 +234,7 @@ void TNCTransceiver::modulate(char *s){
       x = x<<1;
     }
   }
-  OCR1B = 0;
+  //OCR1B = 0;
 }
 
 void TNCTransceiver::Transmit_start(){
