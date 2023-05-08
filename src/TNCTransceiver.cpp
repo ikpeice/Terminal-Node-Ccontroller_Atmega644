@@ -56,17 +56,27 @@ void TNCTransceiver::begin(bool verbros){
   if(debug)Serial.println("Setup frequency done!");
 }
 
-char TNCTransceiver::bits_to_char(bool buffer[], int buff_size){
-  char s=0x00; // = new char[num_of_char];
+void TNCTransceiver::bits_to_char(bool buffer[], int buff_size, char *msg){
+  int num_of_char = buff_size/8;
+  char *s = new char[num_of_char];
   char x = 0x01;
-    for(int j=buff_size;j>0;j--){
-      s = s | (buffer[j-1] * x);
+  int inc=0;
+
+  
+  bool data[8];// = new bool[8];
+
+  for(int i=0;i<num_of_char;i++){
+    for(int j=0;j<8;j++){
+      data[j] = buffer[inc];
+      inc++;
+    }
+    s[i] = 0x00;
+    for(int j=8;j>0;j--){
+      s[i] = s[i] | (data[j-1] * x);
       x = x << 1;
     }
-  if(debug){
-    Serial.println(s);
+    x=0x01;
   }
-  return s;
 }
 
 char  TNCTransceiver::decode(){
