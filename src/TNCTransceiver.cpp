@@ -13,16 +13,16 @@ int *dutyCycle_B= new int[steps];
 ISR(TIMER1_OVF_vect){
   
     if(msg==false && ct==false){
-      OCR1B = dutyCycle_B[counter];
+      OCR1B = dutyCycle_B[counter]; // low freq
     }else if (msg==true && ct == false)
     {
-      OCR1B = dutyCycle_A[counter];
+      OCR1B = dutyCycle_A[counter];  // high freq
     }else{
       OCR1B = dutyCycle_A[counter];
     }
     OCR1A = counterRegister/2;//dutyCycle_A[counter];
     counter++;
-    if(counter==(steps/4)){
+    if(counter==(steps/4)){ // detect zero crossing
       counter=0;
       ct = true;
     }
@@ -249,33 +249,20 @@ void TNCTransceiver::floatTocharArray(char *s, double num) {
 }
 
 void TNCTransceiver::modulate(char *s){
-
-  int listSize = (len(s)*10);
-  bool *list = new bool[listSize];
-  int inc=0;
-
+  sei();
+  while(counter!=0); // wait for zero crossing
   for(int i =0; i<len(s); i++){ //select character
     char x = 0x01;
-    list[inc] = false;
-    inc++;
-
-    for(int j=0;j<8;j++){
-      list[inc] = (s[i] & x)? true: false;
-      inc++;
-      x = x<<1;
-    }
-    list[inc] = true;
-    inc++;
-  }
-  sei();
-  while(counter!=0);
-  for(int i=0; i<listSize;i++){
-    msg = list[i];
+    msg = false;
     ct = false;
     while(ct==false);
+    for(int j=0;j<8;j++){
+      msg = (s[i] & x)? true: false;
+      ct = false;
+      while(ct==false);
+      x = x<<1;
+    }
   }
-
-  delete [] list;
   OCR1B = 0;
 }
 
