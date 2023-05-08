@@ -220,23 +220,51 @@ void TNCTransceiver::floatTocharArray(char *s, double num) {
 }
 
 void TNCTransceiver::modulate(char *s){
-  sei();
-  while(counter!=0); // wait for zero crossing
+  // sei();
+  // while(counter!=0); // wait for zero crossing
+  // for(int i =0; i<len(s); i++){ //select character
+  //   char x = 0x01;
+  //   msg = false;
+  //   ct = false;
+  //   while(ct==false);
+  //   for(int j=0;j<8;j++){
+  //     msg = (s[i] & x)? true: false;
+  //     ct = false;
+  //     while(ct==false);
+  //     x = x<<1;
+  //   }
+  //   msg = false;
+  //   ct = false;
+  //   while(ct==false);    
+  // }
+  // OCR1B = 0;
+
+  int listSize = (len(s)*10);
+  bool *list = new bool[listSize];
+  int inc=0;
+
   for(int i =0; i<len(s); i++){ //select character
     char x = 0x01;
-    msg = false;
-    ct = false;
-    while(ct==false);
+    list[inc] = false;
+    inc++;
+
     for(int j=0;j<8;j++){
-      msg = (s[i] & x)? true: false;
-      ct = false;
-      while(ct==false);
+      list[inc] = (s[i] & x)? true: false;
+      inc++;
       x = x<<1;
     }
-    msg = false;
-    ct = false;
-    while(ct==false);    
+    list[inc] = true;
+    inc++;
   }
+  sei();
+  while(counter!=0);
+  for(int i=0; i<listSize;i++){
+    msg = list[i];
+    ct = false;
+    while(ct==false);
+  }
+
+  delete [] list;
   OCR1B = 0;
 }
 
