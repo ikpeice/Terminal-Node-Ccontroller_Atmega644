@@ -14,7 +14,7 @@ private:
     const int control_pin;
     long period;
     bool flag=true;
-    bool buffer[200];
+    bool buffer[1000];
     char bit = 1;
     bool debug = false;
 // Transmitter

@@ -4,7 +4,7 @@
 #define control_pin 23
 #define TX_controlPin 22
 #define AF_IN 0
-#define verbros true
+#define verbros false
 #define red_led 19
 #define greren_led 20
 #define blue_led 21
@@ -50,9 +50,9 @@ void loop() {
 
     if(TNC.receive(s)){
       digitalWrite(greren_led,1);
-      for(int i=0;i<strlen(s);i++){
-        Serial.println(s[i]);
-      }
+      for(unsigned int i=0;i<strlen(s);i++){
+        Serial.print(s[i]);
+      }Serial.println(" ");
       digitalWrite(greren_led,0);
       clear_buff(s,500);
       if(verbros)Serial.println("Stopped");
