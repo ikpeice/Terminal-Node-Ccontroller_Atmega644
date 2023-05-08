@@ -281,11 +281,11 @@ void TNCTransceiver::modulate(char *s){
 
 void TNCTransceiver::Transmit_start(){
   TIMSK1 = 1;
+  delay(500);
 }
 
 void TNCTransceiver::Transmit_stop(){
   OCR1B = 0;
   OCR1A = 0;
   TIMSK1 = 0;
-
 }
