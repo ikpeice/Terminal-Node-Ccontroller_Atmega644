@@ -70,7 +70,7 @@ char TNCTransceiver::bits_to_char(bool buffer[], int buff_size){
 }
 
 char  TNCTransceiver::decode(){
-  cli();
+  //cli();
     period = pulseIn(AF_pin,HIGH);
     if(period>450 && period<550){
       bit = 1;
@@ -85,7 +85,7 @@ char  TNCTransceiver::decode(){
     else{
       bit = -1;
      }
-    sei();
+    //sei();
     return bit;
   
 }
@@ -233,6 +233,9 @@ void TNCTransceiver::modulate(char *s){
       while(ct==false);
       x = x<<1;
     }
+    msg = false;
+    ct = false;
+    while(ct==false);    
   }
   OCR1B = 0;
 }
