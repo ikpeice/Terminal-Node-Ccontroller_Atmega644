@@ -156,7 +156,7 @@ bool TNCTransceiver::receive(char *msg){
   for(int i=0;i<counter;i++)
   {
     buff[i] = buffer[counter-(i+1)];
-    msg[i] = buffer[counter-(i+1)];
+    //msg[i] = buffer[counter-(i+1)];
   }
   bits_to_char(buff, counter,msg);
   delete [] buff;
