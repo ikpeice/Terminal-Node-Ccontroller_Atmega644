@@ -10,7 +10,7 @@ class TNCTransceiver{
     
 private:
 // Packet 
-    uint8_t flag_byte =  0x7e;
+    char flag_byte =  0x7e;
     char destination_add[7];
     char source_add[7];
     char digipeater_add[8][56];
@@ -25,7 +25,7 @@ private:
     const int control_pin;
     long period;
     bool flag=true;
-    bool buffer[1000];
+    bool buffer[1200];
     char bit = 1;
     bool debug = false;
 // Transmitter
@@ -46,7 +46,6 @@ private:
     
     int len(char s[]);
     char intTochar(int num);
-    //char *myString="";
 
 
 public:
@@ -56,7 +55,7 @@ public:
     void floatTocharArray(char *s, double num);
     void begin(bool verbros);
     bool receive(char *msg);
-    void modulate(char *s);
+    void modulate(char *s,int size);
     void Transmit_packet();
     void start_transmitter();
     void stop_transmitter();
