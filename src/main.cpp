@@ -11,7 +11,7 @@
 #define blue_led 21
 
 bool complete=false;
-char s[500];
+char s[100];
 int num = 0;
 
 char data[50];
@@ -21,6 +21,12 @@ bool stringComplete = false;  // whether the string is complete
 
 TNCTransceiver TNC(AF_IN,control_pin);
 
+
+void clear_buff(char *s,int siz){
+  for(int i=0;i<siz;i++){
+    s[i]='\0';
+  }
+}
 
 void setup() {
   pinMode(red_led,OUTPUT);
@@ -36,15 +42,11 @@ void setup() {
   TNC.set_digipeater_add("Ideal-SPace-Tech-001",0);
   TNC.set_FCS("FG");
   TNC.stop_transmitter();
+  clear_buff(s,100);
 }
 
-void clear_buff(char *s,int siz){
-  for(int i=0;i<siz;i++){
-    s[i]='\0';
-  }
-}
 
-int len[500];
+
 void loop() {
   digitalWrite(red_led,1);
 
@@ -65,7 +67,7 @@ void loop() {
     stringComplete = false;
     Serial.println("Received= "+inputString);
     inputString.toCharArray(s,inputString.length()+1);
-    for(int i=0;i<500;i++){
+    for(int i=0;i<strlen(s);i++){
       Serial.print(s[i]);
     }
     TNC.set_info(s);
@@ -76,7 +78,7 @@ void loop() {
 
     Serial.println("Transmitting");
     TNC.Transmit_packet();
-    clear_buff(s,500);
+    clear_buff(s,100);
     delay(100);
     TNC.stop_transmitter();
     digitalWrite(blue_led,0);  

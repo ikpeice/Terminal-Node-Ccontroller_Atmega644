@@ -10,7 +10,7 @@ class TNCTransceiver{
     
 private:
 // Packet 
-    char flag_byte =  0x7e;
+    uint8_t flag_byte =  0x7e;
     char destination_add[7];
     char source_add[7];
     char digipeater_add[8][56];
@@ -60,11 +60,11 @@ public:
     void Transmit_packet();
     void start_transmitter();
     void stop_transmitter();
-    void set_source_add(char *s);
-    void set_destination_add(char *s);
-    void set_info(char *s);
-    void set_FCS(char *s);
-    void set_digipeater_add(char *s,int x);
+    void set_source_add(const char *s);
+    void set_destination_add(const char *s);
+    void set_info(const char *s);
+    void set_FCS(const char *s);
+    void set_digipeater_add(const char *s,int x);
 };
 
 

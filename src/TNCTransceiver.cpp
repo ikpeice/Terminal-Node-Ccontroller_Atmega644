@@ -296,7 +296,7 @@ void TNCTransceiver::stop_transmitter(){
   TIMSK1 = 0;
 }
 
-void TNCTransceiver::set_destination_add(char *s){
+void TNCTransceiver::set_destination_add(const char *s){
   for(int i=0;i<7;i++){
     destination_add[i] = '\0';
   }
@@ -305,7 +305,7 @@ void TNCTransceiver::set_destination_add(char *s){
   }
 }
 
-void TNCTransceiver::set_source_add(char *s){
+void TNCTransceiver::set_source_add(const char *s){
   for(int i=0;i<7;i++){
     source_add[i] = '\0';
   }
@@ -314,7 +314,7 @@ void TNCTransceiver::set_source_add(char *s){
   }
 }
 
-void TNCTransceiver::set_info(char *s){
+void TNCTransceiver::set_info(const char *s){
   for(int i=0;i<256;i++){
     info[i] = '\0';
   }
@@ -323,14 +323,14 @@ void TNCTransceiver::set_info(char *s){
   }
 }
 
-void TNCTransceiver::set_FCS(char *s){
+void TNCTransceiver::set_FCS(const char *s){
   FCS[0]='\0';
   FCS[1]='\0';
   FCS[0]=s[0];
   FCS[1]=s[1];
 }
 
-void TNCTransceiver::set_digipeater_add(char *s,int x){
+void TNCTransceiver::set_digipeater_add(const char *s,int x){
   for(int i=0;i<56;i++){
     digipeater_add[x][i] = '\0';
   }
@@ -340,13 +340,50 @@ void TNCTransceiver::set_digipeater_add(char *s,int x){
 }
 
 void TNCTransceiver::Transmit_packet(){
-  modulate(&flag_byte);delay(100);
-  modulate(destination_add);delay(100);
-  modulate(source_add);delay(100);
-  modulate(digipeater_add[0]);delay(100);
-  modulate(&control_field);delay(100);
-  modulate(&protocol_id);delay(100);
-  modulate(info);delay(100);
-  modulate(FCS);delay(100);
-  modulate(&flag_byte);delay(100);
+  //char *data = (char**)malloc(sizeof(char)*(19+strlen(digipeater_add[0])+strlen(info)));//*(19+strlen(digipeater_add[0])+strlen(info))
+  // modulate(&flag_byte);delay(100);
+  char *data = new char[(19+strlen(digipeater_add[0])+strlen(info))];
+  int x=0;
+  data[x] = (char)flag_byte;
+  x++;
+  for(int i=0;i<(strlen(destination_add));i++){
+    
+    data[x] = (char)destination_add[i];
+    x++;
+  }
+  for(int i=0;i<(strlen(source_add));i++){
+    
+    data[x] = (char)source_add[i];
+    x++;
+  }
+  data[x] = (char)control_field;
+  x++;
+  data[x] = (char)protocol_id;
+  x++;
+  for(int i=0;i<(strlen(info));i++){
+    
+    data[x] = (char)info[i];
+    x++;
+  }
+  x++;
+  for(int i=0;i<2;i++){
+    
+    data[x] = (char)FCS[i];
+    x++;
+  }
+  data[x] = (char)flag_byte;
+  for(int i=0;i<x;i++){
+    Serial.print(data[i]);
+  }
+  modulate(data);
+  
+   //modulate(destination_add);delay(100);
+   //modulate(source_add);delay(100);
+  // modulate(digipeater_add[0]);delay(100);
+  // modulate(&control_field);delay(100);
+  // modulate(&protocol_id);delay(100);
+  //modulate(info);//delay(100);
+  // modulate(FCS);delay(100);
+  // modulate(&flag_byte);delay(100);
+  delete [] data;
 }
