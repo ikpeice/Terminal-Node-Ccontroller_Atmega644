@@ -340,13 +340,13 @@ void TNCTransceiver::set_digipeater_add(char *s,int x){
 }
 
 void TNCTransceiver::Transmit_packet(){
-  modulate(&flag_byte);
-  modulate(destination_add);
-  modulate(source_add);
-  modulate(digipeater_add[0]);
-  modulate(&control_field);
-  modulate(&protocol_id);
-  modulate(info);
-  modulate(FCS);
-  modulate(&flag_byte);
+  modulate(&flag_byte);delay(100);
+  modulate(destination_add);delay(100);
+  modulate(source_add);delay(100);
+  modulate(digipeater_add[0]);delay(100);
+  modulate(&control_field);delay(100);
+  modulate(&protocol_id);delay(100);
+  modulate(info);delay(100);
+  modulate(FCS);delay(100);
+  modulate(&flag_byte);delay(100);
 }
