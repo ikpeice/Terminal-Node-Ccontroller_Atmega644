@@ -236,28 +236,8 @@ void TNCTransceiver::floatTocharArray(char *s, double num) {
 }
 
 void TNCTransceiver::modulate(char *s){
-  // sei();
-  // while(counter!=0); // wait for zero crossing
-  // for(int i =0; i<len(s); i++){ //select character
-  //   char x = 0x01;
-  //   msg = false;
-  //   ct = false;
-  //   while(ct==false);
-  //   for(int j=0;j<8;j++){
-  //     msg = (s[i] & x)? true: false;
-  //     ct = false;
-  //     while(ct==false);
-  //     x = x<<1;
-  //   }
-  //   msg = false;
-  //   ct = false;
-  //   while(ct==false);    
-  // }
-  // OCR1B = 0;
-
-  int listSize = strlen(s)*10;//(len(s)*10);
-  bool list[1500];
-  //bool *list = new bool[listSize];
+  int listSize = (len(s)*10);
+  bool *list = new bool[listSize];
   int inc=0;
 
   for(int i =0; i<len(s); i++){ //select character
@@ -281,7 +261,7 @@ void TNCTransceiver::modulate(char *s){
     while(ct==false);
   }
 
-  //delete [] list;
+  delete [] list;
   OCR1B = 0;
 }
 
@@ -348,21 +328,21 @@ void TNCTransceiver::Transmit_packet(){
   x++;
   for(int i=0;i<(strlen(destination_add));i++){
     
-    data[x] = (char)destination_add[i];
+    data[x] = destination_add[i];
     x++;
   }
   for(int i=0;i<(strlen(source_add));i++){
     
-    data[x] = (char)source_add[i];
+    data[x] = source_add[i];
     x++;
   }
-  data[x] = (char)control_field;
+  data[x] = control_field;
   x++;
-  data[x] = (char)protocol_id;
+  data[x] = protocol_id;
   x++;
   for(int i=0;i<(strlen(info));i++){
     
-    data[x] = (char)info[i];
+    data[x] = info[i];
     x++;
   }
   x++;

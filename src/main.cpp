@@ -14,7 +14,7 @@ bool complete=false;
 char s[100];
 int num = 0;
 
-char data[50];
+char incoming_data[200];
 
 String inputString="";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
@@ -51,11 +51,10 @@ void loop() {
   digitalWrite(red_led,1);
 
 
-    if(TNC.receive(data)){
-      digitalWrite(greren_led,1);
-      Serial.println(data);delay(100);
-      digitalWrite(greren_led,0);
-      clear_buff(data,50);
+    if(TNC.receive(incoming_data)){
+      //digitalWrite(greren_led,1);
+      Serial.println((incoming_data));
+      clear_buff(incoming_data,200);
       if(verbros)Serial.println("Stopped");
     }
     
@@ -67,7 +66,7 @@ void loop() {
     stringComplete = false;
     Serial.println("Received= "+inputString);
     inputString.toCharArray(s,inputString.length()+1);
-    for(int i=0;i<strlen(s);i++){
+    for(int i=0;i<100;i++){
       Serial.print(s[i]);
     }
     TNC.set_info(s);
