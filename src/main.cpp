@@ -5,7 +5,7 @@
 #define control_pin 23
 #define TX_controlPin 22
 #define AF_IN 0
-#define verbros true
+#define verbros false
 #define red_led 19
 #define greren_led 20
 #define blue_led 21
@@ -31,8 +31,11 @@ void setup() {
   pinMode(TX_controlPin,INPUT);
   
   Serial.println("Started");
-  //cli();
-  TNC.Transmit_start();
+  TNC.set_destination_add("WIDE1-7");
+  TNC.set_source_add("XYZSp-1");
+  TNC.set_digipeater_add("Ideal-SPace-Tech-001",0);
+  TNC.set_FCS("FG");
+  TNC.stop_transmitter();
 }
 
 void clear_buff(char *s,int siz){
@@ -65,15 +68,17 @@ void loop() {
     for(int i=0;i<500;i++){
       Serial.print(s[i]);
     }
+    TNC.set_info(s);
     
     digitalWrite(blue_led,1);
-    TNC.Transmit_start();
+    TNC.start_transmitter();
     delay(100); 
+
     Serial.println("Transmitting");
-    TNC.modulate(s);
+    TNC.Transmit_packet();
     clear_buff(s,500);
     delay(100);
-    //TNC.Transmit_stop();
+    TNC.stop_transmitter();
     digitalWrite(blue_led,0);  
   }
 

@@ -52,7 +52,7 @@ void TNCTransceiver::begin(bool verbros){
   delay(1);
   
   setup_freq();
-  Transmit_stop();
+  stop_transmitter();
   if(debug)Serial.println("Setup frequency done!");
 }
 
@@ -80,13 +80,13 @@ void TNCTransceiver::bits_to_char(bool buffer[], int buff_size, char *msg){
 }
 
 char  TNCTransceiver::decode(){
-  //cli();
-    period = pulseIn(AF_pin,HIGH);
-    if(period>450 && period<550){
+  cli();
+    period = pulseIn(AF_pin,HIGH,10000);
+    if(period>400 && period<650){
       bit = 1;
-    }else if(period>180 && period<280){
-      period = pulseIn(AF_pin,HIGH);
-      if(period>180 && period<280){
+    }else if(period>140 && period<350){
+      period = pulseIn(AF_pin,HIGH,10000);
+      if(period>140 && period<330){
          bit = 0;
       }else{
         bit =  -1;
@@ -95,7 +95,7 @@ char  TNCTransceiver::decode(){
     else{
       bit = -1;
      }
-    //sei();
+    sei();
     return bit;
   
 }
@@ -103,11 +103,10 @@ bool TNCTransceiver::receive(char *msg){
   char bit=1;
   int counter=0;
   int bit_counter=0;
-  int no_of_char=0;
   while(bit){ // wait for start bit
     bit = decode();
     if(bit<0){
-      //if(debug)Serial.println("No signal");
+      if(debug)Serial.println("No signal");
       return false; //digitalRead(control_pin) ||  terminate if control pin is low
     }
   }
@@ -127,8 +126,6 @@ bool TNCTransceiver::receive(char *msg){
       counter++;
       bit_counter++;
       if(bit_counter==8){
-        msg[no_of_char] = bits_to_char(buffer, bit_counter);
-        no_of_char++;
         bit_counter=0; // clear
         flag=true;
       }
@@ -142,10 +139,19 @@ bool TNCTransceiver::receive(char *msg){
       break;
     }
   }
+  if(debug)Serial.println("counter = "+String(counter));
+  bool *buff = new bool[counter];
+  for(int i=0;i<counter;i++)
+  {
+    buff[i] = buffer[counter-(i+1)];
+    //msg[i] = buffer[counter-(i+1)];
+  }
+  bits_to_char(buff, counter,msg);
+  delete [] buff;
+
   return true;
   
 }
-
 
 void TNCTransceiver::setup_freq(){
   cli(); // stop global interrupt
@@ -279,13 +285,68 @@ void TNCTransceiver::modulate(char *s){
   OCR1B = 0;
 }
 
-void TNCTransceiver::Transmit_start(){
+void TNCTransceiver::start_transmitter(){
   TIMSK1 = 1;
   delay(500);
 }
 
-void TNCTransceiver::Transmit_stop(){
+void TNCTransceiver::stop_transmitter(){
   OCR1B = 0;
   OCR1A = 0;
   TIMSK1 = 0;
+}
+
+void TNCTransceiver::set_destination_add(char *s){
+  for(int i=0;i<7;i++){
+    destination_add[i] = '\0';
+  }
+  for(int i=0;i<strlen(s);i++){
+    destination_add[i] = s[i];
+  }
+}
+
+void TNCTransceiver::set_source_add(char *s){
+  for(int i=0;i<7;i++){
+    source_add[i] = '\0';
+  }
+  for(int i=0;i<strlen(s);i++){
+    source_add[i] = s[i];
+  }
+}
+
+void TNCTransceiver::set_info(char *s){
+  for(int i=0;i<256;i++){
+    info[i] = '\0';
+  }
+  for(int i=0;i<strlen(s);i++){
+    info[i] = s[i];
+  }
+}
+
+void TNCTransceiver::set_FCS(char *s){
+  FCS[0]='\0';
+  FCS[1]='\0';
+  FCS[0]=s[0];
+  FCS[1]=s[1];
+}
+
+void TNCTransceiver::set_digipeater_add(char *s,int x){
+  for(int i=0;i<56;i++){
+    digipeater_add[x][i] = '\0';
+  }
+  for(int i=0;i<strlen(s);i++){
+    digipeater_add[x][i] = s[i];
+  }
+}
+
+void TNCTransceiver::Transmit_packet(){
+  modulate(&flag_byte);
+  modulate(destination_add);
+  modulate(source_add);
+  modulate(digipeater_add[0]);
+  modulate(&control_field);
+  modulate(&protocol_id);
+  modulate(info);
+  modulate(FCS);
+  modulate(&flag_byte);
 }
