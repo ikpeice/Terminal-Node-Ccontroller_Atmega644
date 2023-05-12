@@ -2,6 +2,7 @@
 #include <TNCTransceiver.h>
 #include <stdlib.h>
 
+
 #define control_pin 23
 #define TX_controlPin 22
 #define AF_IN 0
@@ -21,8 +22,8 @@ bool stringComplete = false;  // whether the string is complete
 TNCTransceiver TNC(AF_IN,control_pin);
 
 
-void clear_buff(char *s,int siz){
-  for(int i=0;i<siz;i++){
+void clear_buff(char *s,int size){
+  for(int i=0;i<size;i++){
     s[i]='\0';
   }
 }
@@ -47,6 +48,7 @@ void setup() {
 
 
 void loop() {
+  
   digitalWrite(red_led,1);
 
 
@@ -92,10 +94,15 @@ void loop() {
 }
 
 void serialEvent() {
-  if(Serial.available()) {
-
-    inputString = Serial.readString();
-
-    stringComplete = true;
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag so the main loop can
+    // do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    }
   }
 }
