@@ -96,7 +96,7 @@ void decode_packet(char *packet,int size, Recv_packet *recv_p){
   //sum += (0x7e)*2;
   if((sum>>8 & 0xff)==(uint8_t)recv_p->FCS[0] && (sum&0xff)==(uint8_t)recv_p->FCS[1]){
     if(verbros2)Serial.println("Packet correct!!");
-    Serial.println(String(recv_p->command));
+    Serial.print(String(recv_p->command));
   }else{
     if(verbros2)Serial.println("Packet not correct!!");
   }

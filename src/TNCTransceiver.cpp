@@ -310,10 +310,11 @@ void TNCTransceiver::set_info(const char *s){
   for(int i=0;i<100;i++){
     info[i] = '\0';
   }
-  info[0] = '!';
+  
   for(int i=0;i<strlen(s);i++){
-    info[i+1] = s[i];
+    info[i] = s[i];
   }
+  info[strlen(s)] = '!';
 }
 
 // void TNCTransceiver::set_FCS(const char *s){
@@ -352,9 +353,10 @@ void TNCTransceiver::calc_checkSum(){
   sum += separator*6;
   FCS[0] = (sum>>8)&0xff;
   FCS[1] = sum&0xff;
-  Serial.println("Sum = " +String(sum));
-  Serial.print((uint8_t)FCS[0]);Serial.print(", ");
-  Serial.println((uint8_t)FCS[1]);
+  if(debug)Serial.println("Sum = " +String(sum));
+  if(debug)Serial.print((uint8_t)FCS[0]);
+  if(debug)Serial.print(", ");
+  if(debug)Serial.println((uint8_t)FCS[1]);
 }
 
 void TNCTransceiver::Transmit_packet(){
