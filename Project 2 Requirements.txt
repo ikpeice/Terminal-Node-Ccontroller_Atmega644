@@ -1,0 +1,1 @@
+Total Energy: 3.45 * 24 = 82.8WhNo of Battery: 82.8 / 14.8 = 12 cellsSolar Cell: 8.4V / 3.1A / 26Watts
